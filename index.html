@@ -6,9 +6,14 @@
 <title>Calendar</title>
 
 <style>
+/* ===== ОБЩЕЕ ===== */
 body {
     font-family: "PT Mono", monospace;
-    background: #fff;
+    background: #ffffff;
+}
+
+#calendari {
+    font-weight: 600;
 }
 
 /* ===== ОБЕРТКА ===== */
@@ -22,25 +27,29 @@ body {
 #calendari table {
     border-collapse: collapse;
     background: #d8cbb7;
-    border-radius: 16px;
+    border-radius: 18px;
     overflow: hidden;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
     width: 320px;
+    box-shadow: 0 12px 24px rgba(0,0,0,0.15);
 }
 
 /* ===== ШАПКА ===== */
 tr:first-child th {
     background: #5A2A27;
-    color: #fff;
+    color: #ffffff;
     font-size: 18px;
-    padding: 14px 0;
+    padding: 16px 0 14px;
     position: relative;
+    font-weight: 700;
 }
 
 .any {
     display: block;
     font-size: 14px;
-    opacity: 0.9;
+    font-weight: 700;
+    opacity: 0.95;
+    letter-spacing: 0.4px;
+    margin-top: 2px;
 }
 
 /* ===== КНОПКИ ===== */
@@ -48,23 +57,26 @@ tr:first-child th {
 .boto-next {
     background: transparent;
     border: none;
-    color: #fff;
+    color: #ffffff;
     font-size: 20px;
+    font-weight: 700;
     cursor: pointer;
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
 }
 
-.boto-prev { left: 12px; }
-.boto-next { right: 12px; }
+.boto-prev { left: 14px; }
+.boto-next { right: 14px; }
 
 /* ===== ДНИ НЕДЕЛИ ===== */
 tr:nth-child(2) th {
     background: transparent;
-    color: #000;
-    font-size: 14px;
-    padding: 10px 0;
+    color: #000000;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 12px 0 8px;
+    letter-spacing: 0.4px;
 }
 
 /* ===== ЯЧЕЙКИ ===== */
@@ -76,22 +88,23 @@ td span {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 36px;
-    width: 36px;
-    border-radius: 6px;
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
     cursor: pointer;
+    font-weight: 600;
 }
 
 /* дни вне месяца */
 td.fora span {
-    opacity: 0.3;
+    opacity: 0.35;
 }
 
 /* сегодняшний день */
 td.avui span {
     background: #5A2A27;
-    color: #fff;
-    font-weight: bold;
+    color: #ffffff;
+    font-weight: 700;
 }
 
 /* hover */
@@ -121,95 +134,75 @@ Number.prototype.pad = function(num) {
 
 function calendari(widget, data) {
 
-    var original = widget.getElementsByClassName('actiu')[0];
-
-    if (!original) {
-        original = document.createElement('table');
-        original.setAttribute('data-actual',
-            data.getFullYear() + '/' +
-            data.getMonth().pad(2) + '/' +
-            data.getDate().pad(2)
-        );
-        widget.appendChild(original);
-    }
-
-    var diff = data - new Date(original.getAttribute('data-actual'));
-    diff = new Date(diff).getMonth();
-
-    var e = document.createElement('table');
-    widget.appendChild(e);
-
-    e.setAttribute('data-actual',
-        data.getFullYear() + '/' +
-        data.getMonth().pad(2) + '/' +
-        data.getDate().pad(2)
-    );
+    widget.innerHTML = '';
+    var table = document.createElement('table');
 
     /* ===== ШАПКА ===== */
-    var fila = document.createElement('tr');
-    var titol = document.createElement('th');
-    titol.setAttribute('colspan', 7);
+    let tr = document.createElement('tr');
+    let th = document.createElement('th');
+    th.colSpan = 7;
 
-    var boto_prev = document.createElement('button');
-    boto_prev.className = 'boto-prev';
-    boto_prev.innerHTML = '&#8249;';
+    let prev = document.createElement('button');
+    prev.className = 'boto-prev';
+    prev.innerHTML = '&#8249;';
 
-    var boto_next = document.createElement('button');
-    boto_next.className = 'boto-next';
-    boto_next.innerHTML = '&#8250;';
+    let next = document.createElement('button');
+    next.className = 'boto-next';
+    next.innerHTML = '&#8250;';
 
-    titol.appendChild(boto_prev);
-    titol.appendChild(document.createElement('span')).innerHTML =
-        mesos[data.getMonth()] + '<span class="any">' + data.getFullYear() + '</span>';
-    titol.appendChild(boto_next);
+    th.appendChild(prev);
+    th.innerHTML += mesos[data.getMonth()] +
+        '<span class="any">' + data.getFullYear() + '</span>';
+    th.appendChild(next);
 
-    fila.appendChild(titol);
-    e.appendChild(fila);
+    tr.appendChild(th);
+    table.appendChild(tr);
 
-    boto_prev.onclick = () => {
+    prev.onclick = () => {
         data.setMonth(data.getMonth() - 1);
         calendari(widget, data);
     };
 
-    boto_next.onclick = () => {
+    next.onclick = () => {
         data.setMonth(data.getMonth() + 1);
         calendari(widget, data);
     };
 
     /* ===== ДНИ НЕДЕЛИ ===== */
-    fila = document.createElement('tr');
-    for (let i = 1; i < 7; i++) fila.innerHTML += '<th>' + dies_abr[i] + '</th>';
-    fila.innerHTML += '<th>' + dies_abr[0] + '</th>';
-    e.appendChild(fila);
+    tr = document.createElement('tr');
+    for (let i = 1; i < 7; i++) tr.innerHTML += `<th>${dies_abr[i]}</th>`;
+    tr.innerHTML += `<th>${dies_abr[0]}</th>`;
+    table.appendChild(tr);
 
     /* ===== ДАТЫ ===== */
-    var inici_mes = new Date(data.getFullYear(), data.getMonth(), -1).getDay();
-    var actual = new Date(data.getFullYear(), data.getMonth(), -inici_mes);
+    let startDay = new Date(data.getFullYear(), data.getMonth(), -1).getDay();
+    let current = new Date(data.getFullYear(), data.getMonth(), -startDay);
 
-    for (var s = 0; s < 6; s++) {
-        fila = document.createElement('tr');
+    for (let w = 0; w < 6; w++) {
+        tr = document.createElement('tr');
 
-        for (var d = 1; d < 8; d++) {
-            var cela = document.createElement('td');
-            var span = document.createElement('span');
-            span.innerHTML = actual.getDate();
-            cela.appendChild(span);
+        for (let d = 0; d < 7; d++) {
+            let td = document.createElement('td');
+            let span = document.createElement('span');
+            span.textContent = current.getDate();
+            td.appendChild(span);
 
-            if (actual.getMonth() !== data.getMonth()) cela.className = 'fora';
+            if (current.getMonth() !== data.getMonth()) td.className = 'fora';
+
+            let today = new Date();
             if (
-                actual.getDate() === new Date().getDate() &&
-                actual.getMonth() === new Date().getMonth() &&
-                actual.getFullYear() === new Date().getFullYear()
-            ) cela.className = 'avui';
+                current.getDate() === today.getDate() &&
+                current.getMonth() === today.getMonth() &&
+                current.getFullYear() === today.getFullYear()
+            ) td.className = 'avui';
 
-            actual.setDate(actual.getDate() + 1);
-            fila.appendChild(cela);
+            current.setDate(current.getDate() + 1);
+            tr.appendChild(td);
         }
-        e.appendChild(fila);
+        table.appendChild(tr);
     }
 
-    original.remove();
-    e.className = 'actiu';
+    widget.appendChild(table);
 }
 
 calendari(document.getElementById('calendari'), new Date());
