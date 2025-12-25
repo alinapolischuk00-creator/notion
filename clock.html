@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Flip Clock</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    background: #D9CAB3;
+    font-family: "PT Mono", monospace;
+}
+
+.clock-wrapper {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.flip-clock {
+    display: flex;
+    gap: 12px;
+    padding: 20px 26px;
+    background: #d8cbb7;
+    border-radius: 20px;
+    box-shadow: 0 10px 24px rgba(0,0,0,0.18);
+}
+
+.unit {
+    display: flex;
+    gap: 6px;
+}
+
+.flip {
+    position: relative;
+    width: 70px;
+    height: 90px;
+    perspective: 600px;
+}
+
+.card {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: #5A2A27;
+    border-radius: 14px;
+    color: #D9CAB3;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 48px;
+    font-weight: bold;
+    backface-visibility: hidden;
+}
+
+.card.top {
+    transform-origin: bottom;
+}
+
+.card.bottom {
+    transform-origin: top;
+    transform: rotateX(180deg);
+}
+
+.flip.animate .top {
+    animation: flipTop 0.6s ease-in-out forwards;
+}
+
+.flip.animate .bottom {
+    animation: flipBottom 0.6s ease-in-out forwards;
+}
+
+@keyframes flipTop {
+    0% { transform: rotateX(0deg); }
+    100% { transform: rotateX(-180deg); }
+}
+
+@keyframes flipBottom {
+    0% { transform: rotateX(180deg); }
+    100% { transform: rotateX(0deg); }
+}
+
+.separator {
+    font-size: 48px;
+    font-weight: bold;
+    color: #5A2A27;
+    line-height: 90px;
+}
+
+@media (max-width: 400px) {
+    .flip {
+        width: 52px;
+        height: 70px;
+    }
+    .card {
+        font-size: 34px;
+    }
+    .separator {
+        font-size: 34px;
+        line-height: 70px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="clock-wrapper">
+    <div class="flip-clock">
+        <div class="unit" id="hours"></div>
+        <div class="separator">:</div>
+        <div class="unit" id="minutes"></div>
+        <div class="separator">:</div>
+        <div class="unit" id="seconds"></div>
+    </div>
+</div>
+
+<script>
+function createFlipDigit(container, value) {
+    const flip = document.createElement('div');
+    flip.className = 'flip';
+
+    const top = document.createElement('div');
+    top.className = 'card top';
+    top.textContent = value;
+
+    const bottom = document.createElement('div');
+    bottom.className = 'card bottom';
+    bottom.textContent = value;
+
+    flip.appendChild(top);
+    flip.appendChild(bottom);
+    container.appendChild(flip);
+
+    return flip;
+}
+
+function updateFlip(flip, newValue) {
+    const top = flip.querySelector('.top');
+    const bottom = flip.querySelector('.bottom');
+
+    if (top.textContent === newValue) return;
+
+    bottom.textContent = newValue;
+    flip.classList.add('animate');
+
+    setTimeout(() => {
+        top.textContent = newValue;
+        flip.classList.remove('animate');
+    }, 600);
+}
+
+function setupUnit(container) {
+    container.innerHTML = '';
+    return [
+        createFlipDigit(container, '0'),
+        createFlipDigit(container, '0')
+    ];
+}
+
+const hDigits = setupUnit(document.getElementById('hours'));
+const mDigits = setupUnit(document.getElementById('minutes'));
+const sDigits = setupUnit(document.getElementById('seconds'));
+
+function tick() {
+    const now = new Date();
+    const h = String(now.getHours()).padStart(2, '0');
+    const m = String(now.getMinutes()).padStart(2, '0');
+    const s = String(now.getSeconds()).padStart(2, '0');
+
+    updateFlip(hDigits[0], h[0]);
+    updateFlip(hDigits[1], h[1]);
+    updateFlip(mDigits[0], m[0]);
+    updateFlip(mDigits[1], m[1]);
+    updateFlip(sDigits[0], s[0]);
+    updateFlip(sDigits[1], s[1]);
+}
+
+tick();
+setInterval(tick, 1000);
+</script>
+
+</body>
+</html>
