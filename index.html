@@ -3,25 +3,40 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Calendar</title>
+<title>Calendar Widget for Notion</title>
 
 <style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
     font-family: "PT Mono", monospace;
-    background: #fff;
+    background: transparent !important;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 /* ===== ОБЕРТКА ===== */
 .calendar-wrapper {
-    display: flex;
-    justify-content: center;
-    margin-top: 40px;
+    background: transparent;
+    padding: 20px;
 }
 
 /* ===== КАРТОЧКА ===== */
+#calendari {
+    display: inline-block;
+    background: transparent;
+}
+
 #calendari table {
     border-collapse: collapse;
-    background: #d8cbb7;
+    background: rgba(216, 203, 183, 0.85); /* Ваш оригинальный цвет с прозрачностью */
     border-radius: 16px;
     overflow: hidden;
     box-shadow: 0 8px 20px rgba(0,0,0,0.15);
@@ -30,7 +45,7 @@ body {
 
 /* ===== ШАПКА ===== */
 tr:first-child th {
-    background: #5A2A27;
+    background: #5A2A27; /* Ваш оригинальный цвет шапки */
     color: #fff;
     font-size: 18px;
     font-weight: bold;
@@ -56,6 +71,14 @@ tr:first-child th {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
+    padding: 5px 10px;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+.boto-prev:hover,
+.boto-next:hover {
+    background: rgba(255,255,255,0.2);
 }
 
 .boto-prev { left: 12px; }
@@ -83,23 +106,68 @@ td span {
     width: 36px;
     border-radius: 6px;
     cursor: pointer;
+    transition: all 0.2s;
 }
 
 /* дни вне месяца */
 td.fora span {
     opacity: 0.3;
+    color: #000;
 }
 
 /* сегодняшний день */
 td.avui span {
-    background: #5A2A27;
-    color: #fff;
+    background: #5A2A27 !important; /* Ваш оригинальный цвет */
+    color: #fff !important;
     font-weight: bold;
 }
 
 /* hover */
 td span:hover {
     background: rgba(90,42,39,0.25);
+}
+
+/* Версия для темной темы Notion */
+@media (prefers-color-scheme: dark) {
+    #calendari table {
+        background: rgba(45, 45, 45, 0.9); /* Темный полупрозрачный фон */
+        box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    }
+    
+    tr:nth-child(2) th {
+        color: #e0e0e0;
+    }
+    
+    td span {
+        color: #e0e0e0;
+    }
+    
+    td.fora span {
+        color: #e0e0e0;
+        opacity: 0.4;
+    }
+    
+    td span:hover {
+        background: rgba(90,42,39,0.4);
+    }
+}
+
+/* Масштабирование для Notion */
+#calendari.resizable {
+    transform-origin: center;
+    transition: transform 0.3s ease;
+}
+
+@media (max-width: 350px) {
+    #calendari table {
+        transform: scale(0.9);
+    }
+}
+
+@media (max-width: 300px) {
+    #calendari table {
+        transform: scale(0.8);
+    }
 }
 </style>
 </head>
@@ -123,7 +191,6 @@ Number.prototype.pad = function(num) {
 }
 
 function calendari(widget, data) {
-
     var original = widget.getElementsByClassName('actiu')[0];
 
     if (!original) {
@@ -216,6 +283,24 @@ function calendari(widget, data) {
 }
 
 calendari(document.getElementById('calendari'), new Date());
+
+// Автоматическое масштабирование при изменении размера
+let resizeTimer;
+window.addEventListener('resize', function() {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function() {
+        const container = document.getElementById('calendari');
+        const width = container.clientWidth;
+        
+        if (width < 280) {
+            container.style.transform = 'scale(0.8)';
+        } else if (width < 320) {
+            container.style.transform = 'scale(0.9)';
+        } else {
+            container.style.transform = 'scale(1)';
+        }
+    }, 100);
+});
 </script>
 
 </body>
