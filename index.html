@@ -12,17 +12,14 @@
     box-sizing: border-box;
 }
 
-body {
+html, body {
     font-family: "PT Mono", monospace;
-    background: transparent !important;
+    background: #D9CAB3 !important;
     width: 100vw;
     height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-weight: bold !important;
-    overflow: hidden;
+    margin: 0;
 }
+
 
 /* ===== ОБЕРТКА ===== */
 .calendar-wrapper {
@@ -88,7 +85,7 @@ tr:first-child th {
     display: inline; /* Делаем инлайн, чтобы был в той же строке */
     font-size: calc(12px + 1vw); /* Тот же размер, что и у месяца */
     font-weight: bold !important;
-    color: #fff; /* Тот же цвет, что и у месяца */
+    color:#D9CAB3; /* Тот же цвет, что и у месяца */
     opacity: 1; /* Убираем прозрачность */
     margin-left: 8px; /* Отступ между месяцем и годом */
 }
@@ -98,7 +95,7 @@ tr:first-child th {
 .boto-next {
     background: transparent;
     border: none;
-    color: #fff;
+    color: #D9CAB3;
     cursor: pointer;
     position: absolute;
     top: 50%;
@@ -161,7 +158,7 @@ td.fora span {
 /* сегодняшний день */
 td.avui span {
     background: #5A2A27;
-    color: #fff;
+    color: #D9CAB3;
     font-weight: bold !important;
 }
 
