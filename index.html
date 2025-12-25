@@ -15,12 +15,13 @@
 body {
     font-family: "PT Mono", monospace;
     background: transparent !important;
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
     font-weight: bold !important;
+    overflow: hidden;
 }
 
 /* ===== ОБЕРТКА ===== */
@@ -31,17 +32,18 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 5px;
+    padding: 0;
 }
 
 /* ===== КАРТОЧКА ===== */
 #calendari {
     display: inline-block;
     background: transparent;
-    width: 100%;
-    height: 100%;
-    max-width: 500px; /* Максимальный размер */
+    width: calc(100% - 10px);
+    height: calc(100% - 10px);
+    max-width: 500px;
     max-height: 500px;
+    box-shadow: none;
 }
 
 #calendari table {
@@ -52,26 +54,43 @@ body {
     box-shadow: 0 8px 20px rgba(0,0,0,0.15);
     width: 100%;
     height: 100%;
-    table-layout: fixed; /* Фиксированная таблица */
+    table-layout: fixed;
+    margin: 0;
 }
 
 /* ===== ШАПКА ===== */
 tr:first-child th {
     background: #5A2A27;
-    color: #fff;
+    color: #D9CAB3;
     font-weight: bold !important;
-    padding: 2% 0; /* Процентные отступы */
+    padding: 3% 0 2% 0; /* Увеличили верхний отступ */
     position: relative;
-    height: 15%; /* Процентная высота */
-    font-size: calc(12px + 1vw); /* Адаптивный размер текста */
+    height: 16%;
+    font-size: calc(12px + 1vw);
+}
+
+/* Контейнер для месяца и года в одну строку */
+.header-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px; /* Небольшой отступ между месяцем и годом */
+}
+
+.mes-title {
+    font-size: calc(12px + 1vw);
+    font-weight: bold;
+    line-height: 1.1;
 }
 
 .any {
-    display: block;
+    display: inline; /* Делаем инлайн, чтобы был в той же строке */
+    font-size: calc(12px + 1vw); /* Тот же размер, что и у месяца */
     font-weight: bold !important;
-    opacity: 0.9;
-    margin-top: 2%;
-    font-size: calc(10px + 0.8vw);
+    color: #fff; /* Тот же цвет, что и у месяца */
+    opacity: 1; /* Убираем прозрачность */
+    margin-left: 8px; /* Отступ между месяцем и годом */
 }
 
 /* ===== КНОПКИ ===== */
@@ -105,17 +124,18 @@ tr:nth-child(2) th {
     background: transparent;
     color: #000;
     font-weight: bold !important;
-    padding: 1% 0;
-    height: 10%; /* Процентная высота */
-    font-size: calc(10px + 0.8vw); /* Адаптивный размер текста */
+    padding: 1.5% 0; /* Увеличили отступы */
+    height: 10%;
+    font-size: calc(12px + 0.8vw);
+    border-bottom: 2px solid rgba(90, 42, 39, 0.3); /* Линия под днями недели */
 }
 
 /* ===== ЯЧЕЙКИ ===== */
 td {
-    padding: 1%; /* Процентные отступы */
+    padding: 1%;
     text-align: center;
     vertical-align: middle;
-    height: 12.5%; /* Равномерное распределение высоты */
+    height: 12.5%;
 }
 
 td span {
@@ -127,7 +147,7 @@ td span {
     border-radius: 8px;
     cursor: pointer;
     font-weight: bold !important;
-    font-size: calc(10px + 0.8vw); /* Адаптивный размер текста */
+    font-size: calc(10px + 0.8vw);
     transition: all 0.2s;
     margin: 0 auto;
 }
@@ -150,6 +170,11 @@ td span:hover {
     background: rgba(90,42,39,0.25);
 }
 
+/* Линия между днями недели и числами */
+tr:nth-child(2) {
+    border-bottom: 2px solid rgba(90, 42, 39, 0.3);
+}
+
 /* Гарантируем жирность */
 #calendari table * {
     font-weight: bold !important;
@@ -157,7 +182,9 @@ td span:hover {
 
 /* Минимальные размеры текста */
 @media (max-width: 200px) {
-    tr:first-child th {
+    tr:first-child th,
+    .mes-title,
+    .any {
         font-size: 12px !important;
     }
     
@@ -169,11 +196,17 @@ td span:hover {
     .boto-next {
         font-size: 14px !important;
     }
+    
+    tr:nth-child(2) th {
+        font-size: 10px !important;
+    }
 }
 
 /* Максимальные размеры текста */
 @media (min-width: 500px) {
-    tr:first-child th {
+    tr:first-child th,
+    .mes-title,
+    .any {
         font-size: 20px !important;
     }
     
@@ -184,6 +217,11 @@ td span:hover {
     tr:nth-child(2) th {
         font-size: 16px !important;
     }
+}
+
+/* Убираем стандартные стили HTML */
+html {
+    background: transparent;
 }
 </style>
 </head>
@@ -246,11 +284,20 @@ function calendari(widget, data) {
     boto_next.innerHTML = '›';
     boto_next.title = 'Следующий месяц';
 
-    var mesSpan = document.createElement('span');
-    mesSpan.innerHTML = mesos[data.getMonth()] + '<span class="any">' + data.getFullYear() + '</span>';
+    // Создаем контейнер для заголовка
+    var headerContainer = document.createElement('div');
+    headerContainer.className = 'header-container';
+    
+    // Создаем элемент для месяца и года в одной строке
+    var mesTitle = document.createElement('span');
+    mesTitle.className = 'mes-title';
+    mesTitle.innerHTML = mesos[data.getMonth()] + 
+                         '<span class="any">' + data.getFullYear() + '</span>';
 
+    headerContainer.appendChild(mesTitle);
+    
     titol.appendChild(boto_prev);
-    titol.appendChild(mesSpan);
+    titol.appendChild(headerContainer);
     titol.appendChild(boto_next);
 
     fila.appendChild(titol);
@@ -331,8 +378,8 @@ function applyResponsiveStyles() {
     const width = container.clientWidth;
     const height = container.clientHeight;
     
-    // Автоматическая регулировка размера шрифта на основе размера контейнера
-    const baseFontSize = Math.min(width, height) * 0.06; // 6% от меньшей стороны
+    // Автоматическая регулировка размера шрифта
+    const baseFontSize = Math.min(width, height) * 0.06;
     const minFontSize = 10;
     const maxFontSize = 22;
     
@@ -344,11 +391,20 @@ function applyResponsiveStyles() {
         span.style.fontSize = `${fontSize}px`;
     });
     
-    const headers = table.querySelectorAll('tr:first-child th, tr:nth-child(2) th');
-    headers.forEach(header => {
-        header.style.fontSize = `${fontSize * 1.2}px`;
+    // Размер шрифта для заголовка (месяц и год)
+    const headerFontSize = fontSize * 1.2;
+    const titleElements = table.querySelectorAll('.mes-title, .any');
+    titleElements.forEach(el => {
+        el.style.fontSize = `${headerFontSize}px`;
     });
     
+    // Размер шрифта для дней недели
+    const weekDays = table.querySelectorAll('tr:nth-child(2) th');
+    weekDays.forEach(day => {
+        day.style.fontSize = `${fontSize * 0.9}px`;
+    });
+    
+    // Размер кнопок
     const buttons = table.querySelectorAll('.boto-prev, .boto-next');
     buttons.forEach(button => {
         button.style.fontSize = `${fontSize * 1.5}px`;
@@ -359,17 +415,22 @@ function applyResponsiveStyles() {
 document.addEventListener('DOMContentLoaded', function() {
     calendari(document.getElementById('calendari'), new Date());
     
-    // Отслеживаем изменение размера (для Notion)
+    // Устанавливаем прозрачный фон для html элемента
+    document.documentElement.style.background = 'transparent';
+    
+    // Отслеживаем изменение размера
     let resizeObserver;
     if ('ResizeObserver' in window) {
         resizeObserver = new ResizeObserver(function() {
             applyResponsiveStyles();
+            document.body.style.background = 'transparent';
+            document.documentElement.style.background = 'transparent';
         });
         
         const container = document.getElementById('calendari');
         resizeObserver.observe(container);
+        resizeObserver.observe(document.body);
     } else {
-        // Fallback для старых браузеров
         window.addEventListener('resize', function() {
             setTimeout(applyResponsiveStyles, 100);
         });
@@ -378,8 +439,15 @@ document.addEventListener('DOMContentLoaded', function() {
     // Применяем стили сразу
     setTimeout(applyResponsiveStyles, 50);
     
-    // Обновляем каждые 500мс на случай анимаций в Notion
-    setInterval(applyResponsiveStyles, 500);
+    // Гарантируем прозрачность
+    const ensureTransparency = () => {
+        document.body.style.background = 'transparent';
+        document.documentElement.style.background = 'transparent';
+        document.querySelector('.calendar-wrapper').style.background = 'transparent';
+    };
+    
+    ensureTransparency();
+    setInterval(ensureTransparency, 1000);
 });
 </script>
 
