@@ -15,49 +15,63 @@
 body {
     font-family: "PT Mono", monospace;
     background: transparent !important;
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
+    font-weight: bold !important;
 }
 
 /* ===== ОБЕРТКА ===== */
 .calendar-wrapper {
     background: transparent;
-    padding: 20px;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
 }
 
 /* ===== КАРТОЧКА ===== */
 #calendari {
     display: inline-block;
     background: transparent;
+    width: 100%;
+    height: 100%;
+    max-width: 500px; /* Максимальный размер */
+    max-height: 500px;
 }
 
 #calendari table {
     border-collapse: collapse;
-    background: rgba(216, 203, 183, 0.85); /* Ваш оригинальный цвет с прозрачностью */
+    background: #d8cbb7;
     border-radius: 16px;
     overflow: hidden;
     box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-    width: 320px;
+    width: 100%;
+    height: 100%;
+    table-layout: fixed; /* Фиксированная таблица */
 }
 
 /* ===== ШАПКА ===== */
 tr:first-child th {
-    background: #5A2A27; /* Ваш оригинальный цвет шапки */
+    background: #5A2A27;
     color: #fff;
-    font-size: 18px;
-    font-weight: bold;
-    padding: 14px 0;
+    font-weight: bold !important;
+    padding: 2% 0; /* Процентные отступы */
     position: relative;
+    height: 15%; /* Процентная высота */
+    font-size: calc(12px + 1vw); /* Адаптивный размер текста */
 }
 
 .any {
     display: block;
-    font-size: 18px;
-    font-weight: bold;
+    font-weight: bold !important;
     opacity: 0.9;
+    margin-top: 2%;
+    font-size: calc(10px + 0.8vw);
 }
 
 /* ===== КНОПКИ ===== */
@@ -66,14 +80,16 @@ tr:first-child th {
     background: transparent;
     border: none;
     color: #fff;
-    font-size: 20px;
     cursor: pointer;
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    padding: 5px 10px;
+    padding: 1% 2%;
     border-radius: 4px;
     transition: background 0.2s;
+    line-height: 1;
+    font-weight: bold !important;
+    font-size: calc(14px + 1.2vw);
 }
 
 .boto-prev:hover,
@@ -81,45 +97,52 @@ tr:first-child th {
     background: rgba(255,255,255,0.2);
 }
 
-.boto-prev { left: 12px; }
-.boto-next { right: 12px; }
+.boto-prev { left: 3%; }
+.boto-next { right: 3%; }
 
 /* ===== ДНИ НЕДЕЛИ ===== */
 tr:nth-child(2) th {
     background: transparent;
     color: #000;
-    font-size: 18px;
-    font-weight: bold;
-    padding: 10px 0;
+    font-weight: bold !important;
+    padding: 1% 0;
+    height: 10%; /* Процентная высота */
+    font-size: calc(10px + 0.8vw); /* Адаптивный размер текста */
 }
 
 /* ===== ЯЧЕЙКИ ===== */
 td {
-    padding: 6px;
+    padding: 1%; /* Процентные отступы */
+    text-align: center;
+    vertical-align: middle;
+    height: 12.5%; /* Равномерное распределение высоты */
 }
 
 td span {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 36px;
-    width: 36px;
-    border-radius: 6px;
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
     cursor: pointer;
+    font-weight: bold !important;
+    font-size: calc(10px + 0.8vw); /* Адаптивный размер текста */
     transition: all 0.2s;
+    margin: 0 auto;
 }
 
 /* дни вне месяца */
 td.fora span {
     opacity: 0.3;
-    color: #000;
+    font-weight: bold !important;
 }
 
 /* сегодняшний день */
 td.avui span {
-    background: #5A2A27 !important; /* Ваш оригинальный цвет */
-    color: #fff !important;
-    font-weight: bold;
+    background: #5A2A27;
+    color: #fff;
+    font-weight: bold !important;
 }
 
 /* hover */
@@ -127,46 +150,39 @@ td span:hover {
     background: rgba(90,42,39,0.25);
 }
 
-/* Версия для темной темы Notion */
-@media (prefers-color-scheme: dark) {
-    #calendari table {
-        background: rgba(45, 45, 45, 0.9); /* Темный полупрозрачный фон */
-        box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-    }
-    
-    tr:nth-child(2) th {
-        color: #e0e0e0;
+/* Гарантируем жирность */
+#calendari table * {
+    font-weight: bold !important;
+}
+
+/* Минимальные размеры текста */
+@media (max-width: 200px) {
+    tr:first-child th {
+        font-size: 12px !important;
     }
     
     td span {
-        color: #e0e0e0;
+        font-size: 10px !important;
     }
     
-    td.fora span {
-        color: #e0e0e0;
-        opacity: 0.4;
+    .boto-prev,
+    .boto-next {
+        font-size: 14px !important;
+    }
+}
+
+/* Максимальные размеры текста */
+@media (min-width: 500px) {
+    tr:first-child th {
+        font-size: 20px !important;
     }
     
-    td span:hover {
-        background: rgba(90,42,39,0.4);
+    td span {
+        font-size: 18px !important;
     }
-}
-
-/* Масштабирование для Notion */
-#calendari.resizable {
-    transform-origin: center;
-    transition: transform 0.3s ease;
-}
-
-@media (max-width: 350px) {
-    #calendari table {
-        transform: scale(0.9);
-    }
-}
-
-@media (max-width: 300px) {
-    #calendari table {
-        transform: scale(0.8);
+    
+    tr:nth-child(2) th {
+        font-size: 16px !important;
     }
 }
 </style>
@@ -222,15 +238,19 @@ function calendari(widget, data) {
 
     var boto_prev = document.createElement('button');
     boto_prev.className = 'boto-prev';
-    boto_prev.innerHTML = '&#8249;';
+    boto_prev.innerHTML = '‹';
+    boto_prev.title = 'Предыдущий месяц';
 
     var boto_next = document.createElement('button');
     boto_next.className = 'boto-next';
-    boto_next.innerHTML = '&#8250;';
+    boto_next.innerHTML = '›';
+    boto_next.title = 'Следующий месяц';
+
+    var mesSpan = document.createElement('span');
+    mesSpan.innerHTML = mesos[data.getMonth()] + '<span class="any">' + data.getFullYear() + '</span>';
 
     titol.appendChild(boto_prev);
-    titol.appendChild(document.createElement('span')).innerHTML =
-        mesos[data.getMonth()] + '<span class="any">' + data.getFullYear() + '</span>';
+    titol.appendChild(mesSpan);
     titol.appendChild(boto_next);
 
     fila.appendChild(titol);
@@ -248,29 +268,44 @@ function calendari(widget, data) {
 
     /* ===== ДНИ НЕДЕЛИ ===== */
     fila = document.createElement('tr');
-    for (let i = 1; i < 7; i++) fila.innerHTML += '<th>' + dies_abr[i] + '</th>';
-    fila.innerHTML += '<th>' + dies_abr[0] + '</th>';
+    for (let i = 1; i < 7; i++) {
+        let th = document.createElement('th');
+        th.textContent = dies_abr[i];
+        fila.appendChild(th);
+    }
+    let th = document.createElement('th');
+    th.textContent = dies_abr[0];
+    fila.appendChild(th);
     e.appendChild(fila);
 
     /* ===== ДАТЫ ===== */
-    var inici_mes = new Date(data.getFullYear(), data.getMonth(), -1).getDay();
-    var actual = new Date(data.getFullYear(), data.getMonth(), -inici_mes);
+    var inici_mes = new Date(data.getFullYear(), data.getMonth(), 1).getDay();
+    if (inici_mes === 0) inici_mes = 6;
+    else inici_mes--;
+    
+    var actual = new Date(data.getFullYear(), data.getMonth(), 1 - inici_mes);
 
     for (var s = 0; s < 6; s++) {
         fila = document.createElement('tr');
 
-        for (var d = 1; d < 8; d++) {
+        for (var d = 0; d < 7; d++) {
             var cela = document.createElement('td');
             var span = document.createElement('span');
-            span.innerHTML = actual.getDate();
+            span.textContent = actual.getDate();
             cela.appendChild(span);
 
-            if (actual.getMonth() !== data.getMonth()) cela.className = 'fora';
+            if (actual.getMonth() !== data.getMonth()) {
+                cela.className = 'fora';
+            }
+            
+            var today = new Date();
             if (
-                actual.getDate() === new Date().getDate() &&
-                actual.getMonth() === new Date().getMonth() &&
-                actual.getFullYear() === new Date().getFullYear()
-            ) cela.className = 'avui';
+                actual.getDate() === today.getDate() &&
+                actual.getMonth() === today.getMonth() &&
+                actual.getFullYear() === today.getFullYear()
+            ) {
+                cela.className = 'avui';
+            }
 
             actual.setDate(actual.getDate() + 1);
             fila.appendChild(cela);
@@ -278,28 +313,73 @@ function calendari(widget, data) {
         e.appendChild(fila);
     }
 
-    original.remove();
+    if (original && original.parentNode) {
+        original.remove();
+    }
     e.className = 'actiu';
+    
+    // Применяем адаптивность
+    applyResponsiveStyles();
 }
 
-calendari(document.getElementById('calendari'), new Date());
+// Функция для применения адаптивных стилей
+function applyResponsiveStyles() {
+    const table = document.querySelector('#calendari table.actiu');
+    if (!table) return;
+    
+    const container = document.getElementById('calendari');
+    const width = container.clientWidth;
+    const height = container.clientHeight;
+    
+    // Автоматическая регулировка размера шрифта на основе размера контейнера
+    const baseFontSize = Math.min(width, height) * 0.06; // 6% от меньшей стороны
+    const minFontSize = 10;
+    const maxFontSize = 22;
+    
+    const fontSize = Math.max(minFontSize, Math.min(maxFontSize, baseFontSize));
+    
+    // Применяем размеры ко всем элементам
+    const allSpans = table.querySelectorAll('td span');
+    allSpans.forEach(span => {
+        span.style.fontSize = `${fontSize}px`;
+    });
+    
+    const headers = table.querySelectorAll('tr:first-child th, tr:nth-child(2) th');
+    headers.forEach(header => {
+        header.style.fontSize = `${fontSize * 1.2}px`;
+    });
+    
+    const buttons = table.querySelectorAll('.boto-prev, .boto-next');
+    buttons.forEach(button => {
+        button.style.fontSize = `${fontSize * 1.5}px`;
+    });
+}
 
-// Автоматическое масштабирование при изменении размера
-let resizeTimer;
-window.addEventListener('resize', function() {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(function() {
-        const container = document.getElementById('calendari');
-        const width = container.clientWidth;
+// Запускаем календарь
+document.addEventListener('DOMContentLoaded', function() {
+    calendari(document.getElementById('calendari'), new Date());
+    
+    // Отслеживаем изменение размера (для Notion)
+    let resizeObserver;
+    if ('ResizeObserver' in window) {
+        resizeObserver = new ResizeObserver(function() {
+            applyResponsiveStyles();
+        });
         
-        if (width < 280) {
-            container.style.transform = 'scale(0.8)';
-        } else if (width < 320) {
-            container.style.transform = 'scale(0.9)';
-        } else {
-            container.style.transform = 'scale(1)';
-        }
-    }, 100);
+        const container = document.getElementById('calendari');
+        resizeObserver.observe(container);
+    } else {
+        // Fallback для старых браузеров
+        window.addEventListener('resize', function() {
+            setTimeout(applyResponsiveStyles, 100);
+        });
+    }
+    
+    // Применяем стили сразу
+    setTimeout(applyResponsiveStyles, 50);
+    
+    // Обновляем каждые 500мс на случай анимаций в Notion
+    setInterval(applyResponsiveStyles, 500);
 });
 </script>
 
